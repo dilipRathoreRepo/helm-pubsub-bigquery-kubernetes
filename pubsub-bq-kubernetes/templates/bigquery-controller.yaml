@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: bigquery-controller
+  labels:
+    name: bigquery-controller
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: bigquery-controller
+    spec:
+      containers:
+      - name: bigquery
+        #        image: gcr.io/rising-minutia-254502/pubsub-bq-pipe:v1
+        image: gcr.io/rising-minutia-254502/pubsub_bq_kubernetes:v15
+        env:
+        - name: PROCESSINGSCRIPT
+          value: pubsub-to-bigquery
+        # Change this to your pubsub topic
+        - name: PUBSUB_TOPIC
+          value: projects/rising-minutia-254502/topics/mypubsub
+        # Change this to your project ID.
+        - name: PROJECT_ID
+          value: rising-minutia-254502
+        # Change the following two settings to your dataset and table.
+        - name: BQ_DATASET
+          value: mydataset
+        - name: BQ_TABLE
+          value: tweets

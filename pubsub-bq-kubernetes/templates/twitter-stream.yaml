@@ -1,0 +1,46 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: twitter-stream
+  labels:
+    name: twitter-stream
+spec:
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        name: twitter-stream
+    spec:
+      containers:
+      - name: twitter-to-pubsub
+        #image: gcr.io/rising-minutia-254502/pubsub-bq-pipe:v1
+        image: gcr.io/rising-minutia-254502/pubsub_bq_kubernetes:v15
+        env:
+        - name: PROCESSINGSCRIPT
+          value: twitter-to-pubsub
+        - name: PUBSUB_TOPIC
+          value: projects/rising-minutia-254502/topics/mypubsub
+        ## twitter credentials
+        - name: CONSUMERKEY
+          valueFrom:
+            secretKeyRef:
+              name: twitter-access-env
+              key: consumer_key
+        - name: CONSUMERSECRET
+          valueFrom:
+            secretKeyRef:
+              name: twitter-access-env
+              key: consumer_secret
+        - name: ACCESSTOKEN
+          valueFrom:
+            secretKeyRef:
+              name: twitter-access-env
+              key: access_token
+        - name: ACCESSTOKENSEC
+          valueFrom:
+            secretKeyRef:
+              name: twitter-access-env
+              key: access_token_sec
+        - name: TWSTREAMMODE
+#          value: sample
+          value: specific
